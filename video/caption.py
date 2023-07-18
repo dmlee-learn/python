@@ -5,12 +5,12 @@ import numpy as np # numpy 패키지 로드하여 np로 사용
 # 캡쳐 시작 좌표, 가로, 세로 길이
 x, y, width, height = 975, 170, 915, 400
 """
-image – 8bit, single-channel binary image, canny edge를 선 적용.
-rho – r 값의 범위 (0 ~ 1 실수)
-theta – 𝜃 값의 범위(0 ~ 180 정수)
-threshold – 만나는 점의 기준, 숫자가 작으면 많은 선이 검출되지만 정확도가 떨어지고, 숫자가 크면 정확도가 올라감.
-minLineLength – 선의 최소 길이. 이 값보다 작으면 reject.
-maxLineGap – 선과 선사이의 최대 허용간격. 이 값보다 작으며 reject.
+image : 8bit, single-channel binary image, canny edge를 선 적용.
+rho : r 값의 범위 (0 ~ 1 실수)
+theta : 𝜃 값의 범위(0 ~ 180 정수)
+threshold : 만나는 점의 기준, 숫자가 작으면 많은 선이 검출되지만 정확도가 떨어지고, 숫자가 크면 정확도가 올라감.
+minLineLength : 선의 최소 길이. 이 값보다 작으면 reject.
+maxLineGap : 선과 선사이의 최대 허용간격. 이 값보다 작으며 reject.
 """
 rho = 1
 theta = np.pi/180
