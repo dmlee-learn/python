@@ -56,8 +56,10 @@ cv2.setTrackbarMin('height', 'text detection', 1)
 im = ImageGrab.grab(bbox=(0, 0, 10, 10))
 before = cv2.cvtColor(np.array(im), cv2.IMREAD_COLOR)
 before = np.mean(im, axis=(0, 1))
+
+#추후 thread로 변경시 좀 더 좋을 것 같음
 while True:
-  #캐니 엣지 값
+  #q키로 종료를 위한 추가 설정
   if cv2.waitKey(1) & 0xFF == ord('q'):
     break  
 
