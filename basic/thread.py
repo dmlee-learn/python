@@ -1,13 +1,13 @@
 import threading
  
-def sum():
-    print("Subthread")
+def one():
+    print("one start")
  
-def captureRun():
-    print("Subthread start")
+def two():
+    print("two start")
 
-t = threading.Thread(target=sum)
-tt = threading.Thread(target=captureRun).start
-t.start()
+first = threading.Thread(target=one)
+threading.Thread(target=two).start
+first.start()
  
-print("Main Thread")
+print("Main")
