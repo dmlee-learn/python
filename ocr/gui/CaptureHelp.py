@@ -23,8 +23,8 @@ class CaptureHelp:
     def capture(self):       
         #이미지 캡쳐
         CaptureImage = ImageGrab.grab(bbox=[self.x, self.y, self.width, self.height], all_screens=False)
-        resultImage = self.imageProcessing(CaptureImage)
-        return resultImage
+        #resultImage = self.imageProcessing(CaptureImage)
+        return CaptureImage
     
     def imageProcessing(self, CaptureImage):
 
