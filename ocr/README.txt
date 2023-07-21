@@ -7,8 +7,8 @@ ocr
 install pip install -q paddlepaddle paddleocr
 pip install paddlepaddle paddleocr
 apt-get install --reinstall python3-wget
-ocr 테스트
-!paddleocr --image_dir.jpg --lang=korean
+    ocr 테스트
+    !paddleocr --image_dir.jpg --lang=korean
 혹은
 pip install pytesseract
 혹은
