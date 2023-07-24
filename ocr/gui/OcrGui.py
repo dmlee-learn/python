@@ -4,6 +4,20 @@ from tkinter import ttk
 import tkinter as tk
 from PIL import ImageTk, Image # Pillow
 import threading
+import numpy as np
+#import easyocr
+
+#ocr 인식 언어
+#eocr = easyocr.Reader(['en'])
+
+#ocr원본 언어 설정
+from paddleocr import PaddleOCR, draw_ocr
+#원본 언어 설정 한국어 korean
+ocr = PaddleOCR(lang="en")
+
+#번역기 영어 -> 한글
+from translate import Translator
+translator = Translator(from_lang="en", to_lang="ko")
 
 #tk 설정
 tkObject = Tk()
@@ -34,28 +48,37 @@ x=0
 y=0
 width=100
 height=100
+max_height = tkObject.winfo_screenheight()
+max_width = tkObject.winfo_screenwidth()
+
 cap.setCaptureBox(x, y, width, height)
 
+before = False
 def captureToImage():
+    global before
     capimag = cap.capture()
+    before = np.mean(capimag, axis=(0, 1))
+    capimag = cap.imageProcessing(CaptureImage=capimag)      
     imageFormArray = Image.fromarray(capimag)
     transImage = ImageTk.PhotoImage(image=imageFormArray)
+    
     return transImage;
 
-def ocrRun():
-    after = np.mean(im, axis=(0, 1))
-    
-    # 이미지의 rgb 값을 비교하여 같은 이미지 일경우 문자 인식 단계를 넘김
-    if not (before[0] == after[0] and before[1] == after[1] and before[2] == after[2]):
-      ocr_result = eocr.readtext(src) #([[36, 2], [110, 2], [110, 26], [36, 26]], 'import', 0.999067978196543)
-      final_text = ''
-      for sub_result in ocr_result: 
-        final_text += sub_result[1]
-      
-      print(final_text) #번역전
-      final_text = translator.translate(final_text)
-      print(final_text) #번역후
-      before = after
+from lib.ocr import ocrEasyocr
+eocr = ocrEasyocr.ocrEasyocr()
+def ocrRun(capimag):
+    global eocr
+    ocr_result = eocr.getTextFromImage(capimag)    
+    return ocr_result
+
+from lib.draw import draw
+drawObj = draw.draw()
+
+#def drawText(transText):
+#    print("draw start") 
+# #    drawObj.drawText(transText)
+
+
 
 photo2 = captureToImage()
 
@@ -66,13 +89,26 @@ labelImage = ttk.Label(subFrame, image=photo2) #라벨 주가 및 위치 설정
 labelImage.pack()
 def captureRun():
     print("captureRun start") 
-    global running
-    global cap
+    global running, cap, before
+
     while running:
+        #drawObj.eleserText()
         capimag = cap.capture()
-        imageFormArray = Image.fromarray(capimag)
-        imgtk = ImageTk.PhotoImage(image=imageFormArray)
-        labelImage['image'] = imgtk
+        #drawObj.restoreTExt()
+        # 이미지의 rgb 값을 비교하여 같은 이미지 일경우 문자 인식 단계를 넘김
+        after = np.mean(capimag, axis=(0, 1))
+        if not (before[0] == after[0] and before[1] == after[1] and before[2] == after[2]):
+            capimag = cap.imageProcessing(CaptureImage=capimag)          
+            imageFormArray = Image.fromarray(capimag)
+            imgtk = ImageTk.PhotoImage(image=imageFormArray)
+            labelImage['image'] = imgtk
+            before = after
+            resultText = ocrRun(capimag)
+            print(resultText)
+            transText = translator.translate(resultText)
+            print(transText) #번역후
+            drawObj.drawText(transText)
+
 
         
 
@@ -92,47 +128,45 @@ ttk.Button(mainFrame, text="imageChange", command=startCapture).grid(row=0, colu
 def selectX(var):
     var = int(float(var))
     global x
-    global width 
     x = var
-    width = var + width
     setCaptureBox()
 
 def selectY(var):
+    var = int(float(var))
     global y
-    global height
     y = var
-    height = var + height
     setCaptureBox()
 
 def selectWidth(var):
-    global x
+    var = int(float(var))
     global width 
-    width = var + x
+    width = var
     setCaptureBox()
 
 def selectHeight(var):
-    global y
+    var = int(float(var))
     global height
-    height = var + y
+    height = var
     setCaptureBox()
 
 def setCaptureBox():
-    global cap
-    cap.setCaptureBox(x, y, width, height)
+    global cap    
+    cap.setCaptureBox(x, y, x+width, y+height)
+    drawObj.setRect(x, y, x+width, y+height)
         
         
 
 ttk.Label(mainFrame, text="X").grid(row=1, column=0) #라벨 주가 및 위치 설정
-textboxX = ttk.Scale(mainFrame, from_=0, to=100, orient='horizontal', command=selectX, variable=tk.IntVar())
+textboxX = ttk.Scale(mainFrame,length=400, from_=0, to=max_width, orient='horizontal', command=selectX, variable=tk.IntVar())
 textboxX.grid(row=1, column=1)
 ttk.Label(mainFrame, text="Y").grid(row=1, column=2) #라벨 주가 및 위치 설정
-textboxY = ttk.Scale(mainFrame, from_=0, to=100, orient='horizontal', command=selectY, variable=tk.IntVar())
+textboxY = ttk.Scale(mainFrame, length=400, from_=0, to=max_height, orient='horizontal', command=selectY, variable=tk.IntVar())
 textboxY.grid(row=1, column=3)
-ttk.Label(mainFrame, text="Width").grid(row=1, column=4) #라벨 주가 및 위치 설정
-textboxWidth = ttk.Scale(mainFrame, from_=0, to=100, orient='horizontal', command=selectWidth, variable=tk.IntVar())
-textboxWidth.grid(row=1, column=5)
-ttk.Label(mainFrame, text="Height").grid(row=1, column=6) #라벨 주가 및 위치 설정
-textboxHeight = ttk.Scale(mainFrame, from_=0, to=100, orient='horizontal', command=selectHeight, variable=tk.IntVar())
-textboxHeight.grid(row=1, column=7)
+ttk.Label(mainFrame, text="Width").grid(row=2, column=0) #라벨 주가 및 위치 설정
+textboxWidth = ttk.Scale(mainFrame, length=400, from_=1, to=max_width, orient='horizontal', command=selectWidth, variable=tk.IntVar())
+textboxWidth.grid(row=2, column=1)
+ttk.Label(mainFrame, text="Height").grid(row=2, column=2) #라벨 주가 및 위치 설정
+textboxHeight = ttk.Scale(mainFrame, length=400, from_=1, to=max_height, orient='horizontal', command=selectHeight, variable=tk.IntVar())
+textboxHeight.grid(row=2, column=3)
 
 tkObject.mainloop() #GUI 루프 실행
