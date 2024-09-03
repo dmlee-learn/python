@@ -69,19 +69,22 @@ class CaptureHelp:
         """
 
         #흑백 변환
-        CaptureGray = cv2.cvtColor(np.array(CaptureImage), cv2.COLOR_BGR2GRAY)
+        #CaptureGray = cv2.cvtColor(np.array(CaptureImage), cv2.COLOR_BGR2GRAY)
 
         #이진화
-        _, CaptureBinary = cv2.threshold(np.array(CaptureGray), 0, 255, cv2.THRESH_OTSU)
+        #_, CaptureBinary = cv2.threshold(np.array(CaptureGray), 0, 255, cv2.THRESH_OTSU)
 
         
         
         #에지 정보를 유지하며 노이즈을 효과적으로 제거하기 위해 양방향 필터 수행
-        CaptureFiltering = cv2.bilateralFilter(CaptureBinary, -1, 10, 5)
+        #CaptureFiltering = cv2.bilateralFilter(CaptureBinary, -1, 10, 5)
         
         #모폴로지 연산
         #kernel = np.ones((3, 1), np.uint8)
         #src_morphology = cv2.morphologyEx(src_filtering, cv2.MORPH_OPEN, kernel)
+
+        #테스트 캡쳐
+        CaptureFiltering = cv2.cvtColor(np.array(CaptureImage), cv2.IMREAD_COLOR)
         return CaptureFiltering
 
         

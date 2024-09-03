@@ -11,9 +11,9 @@ import numpy as np
 #eocr = easyocr.Reader(['en'])
 
 #ocr원본 언어 설정
-from paddleocr import PaddleOCR, draw_ocr
+#from paddleocr import PaddleOCR, draw_ocr
 #원본 언어 설정 한국어 korean
-ocr = PaddleOCR(lang="en")
+#ocr = PaddleOCR(lang="en")
 
 #번역기 영어 -> 한글
 from translate import Translator
@@ -107,7 +107,7 @@ def captureRun():
             print(resultText)
             transText = translator.translate(resultText)
             print(transText) #번역후
-            drawObj.drawText(transText)
+            #drawObj.drawText(transText)
 
 
         
@@ -157,16 +157,16 @@ def setCaptureBox():
         
 
 ttk.Label(mainFrame, text="X").grid(row=1, column=0) #라벨 주가 및 위치 설정
-textboxX = ttk.Scale(mainFrame,length=400, from_=0, to=max_width, orient='horizontal', command=selectX, variable=tk.IntVar())
+textboxX = ttk.Scale(mainFrame,length=300, from_=0, to=max_width, orient='horizontal', command=selectX, variable=tk.IntVar())
 textboxX.grid(row=1, column=1)
 ttk.Label(mainFrame, text="Y").grid(row=1, column=2) #라벨 주가 및 위치 설정
-textboxY = ttk.Scale(mainFrame, length=400, from_=0, to=max_height, orient='horizontal', command=selectY, variable=tk.IntVar())
+textboxY = ttk.Scale(mainFrame, length=300, from_=0, to=max_height, orient='horizontal', command=selectY, variable=tk.IntVar())
 textboxY.grid(row=1, column=3)
 ttk.Label(mainFrame, text="Width").grid(row=2, column=0) #라벨 주가 및 위치 설정
-textboxWidth = ttk.Scale(mainFrame, length=400, from_=1, to=max_width, orient='horizontal', command=selectWidth, variable=tk.IntVar())
+textboxWidth = ttk.Scale(mainFrame, length=300, from_=1, to=max_width, orient='horizontal', command=selectWidth, variable=tk.IntVar())
 textboxWidth.grid(row=2, column=1)
 ttk.Label(mainFrame, text="Height").grid(row=2, column=2) #라벨 주가 및 위치 설정
-textboxHeight = ttk.Scale(mainFrame, length=400, from_=1, to=max_height, orient='horizontal', command=selectHeight, variable=tk.IntVar())
+textboxHeight = ttk.Scale(mainFrame, length=300, from_=1, to=max_height, orient='horizontal', command=selectHeight, variable=tk.IntVar())
 textboxHeight.grid(row=2, column=3)
 
 tkObject.mainloop() #GUI 루프 실행

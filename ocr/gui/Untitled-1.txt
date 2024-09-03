@@ -1,0 +1,176 @@
+from tkinter import *
+import tkinter as tk
+import pandas as pd
+from tkinter import filedialog
+import time
+
+win=tk.Tk()
+win.geometry('330x515')
+win.title('code search')
+
+label1=Label(win)
+label1.config(text="code:")
+label1.place(x=5,y=10)
+
+btn2 = Button(win)
+btn2.config(text="위치지점:", width=44,height=2, anchor="w")
+btn2.place(x=8, y=33)
+
+btn3 = Button(win)
+btn3.config(text="no",width=8,heigh=1)
+btn3.place(x=7, y=74)
+
+btn4 = Button(win)
+btn4.config(text="Om",width=35,heigh=1)
+btn4.place(x=72, y=74)
+
+btn5 = Button(win)
+btn5.config(text="no", width=8, height=1)
+btn5.place(x=5,y=240)
+
+btn6 = Button(win)
+btn6.config(text="Om2",width=35, height=1)
+btn6.place(x=72, y=250)
+
+ent=Entry(win)
+ent.place(x=65,y=9)
+
+save_var=tk.StringVar(value="d")
+Button_save1=tk.Radiobutton(win, text="d", value="d",variable=save_var)
+Button_save1.place(x=120,y=42)
+Button_save2=tk.Radiobutton(win, text="e", value="e",variable=save_var)
+Button_save2.place(x=120,y=42)
+
+def code_p():
+
+   from tkinter import Scrollbar, Text, END, DISABLED
+
+   #time.strftime('%Y-%m-%d',time.localtime(time.time()))
+
+   a=time.strftime('%Y-%m-%d',time.localtime(time.time()))
+
+   b=("로그_{}.txt".format(a))
+
+   file_path=r"R:\".format(b)
+
+   drive=save_var.get()
+
+   output_path=r"{}:\_{}.TXT".format(drive,a)
+
+   with open(file_path,"r") as file:
+          content = file.read().strip().lower()
+        
+   data=[line.split("|")for line in content.split("\n")]
+
+   df=pd.DataFrame(data, columns=["col1","col2","col3","col4","col5","col6","col7","col8"])
+
+   n=ent.get()
+
+   search_keyword=str("{}".format(n).upper())
+
+   search_condition=(df["col1"]==search_keyword)
+
+   result=df.loc[search_condition]
+
+   result.reset_index(inplace=True)
+
+   result.index=result.index+1
+
+   if not n:
+       Label3.config(text="코드입력하시오")
+       return
+
+   if result.empty:
+       search_keyword=("{}".format(n).upper())
+       result=df[df["col7"].str.contains(search_keyword, case=False)]
+       col7_values=result["col7"].unique().tolist()
+       col1_values=result["col1"].unique().tolist()
+
+       if not col7_values:
+           label3.config(text="입력다시")
+       else:
+           label3.config(text="\n".join(f"{i+1}{v}"for i,v in enumerate(col7_values)),justify='left')
+           print(col1_values)
+
+           Scrollbar=Scrollbar(win)
+           Scrollbar.place(x=310, y=285, height=195)
+
+           Label5_text=Text(win, yscrollcommand=Scrollbar.set)
+           Label5_text.place(x=5, y=276, width=310, height=200)
+
+           col2_str='\n'.join(f'{index+1:2}{value}'for index, value in enumerate(col1_values))
+
+           Label5_text.insert(END, col2_str)
+           Label5_text.tag_configure("left", justify="left", imargin1=25)
+           Label5_text.tag_add("left","1.0","end")
+           Label5_text.config(state=DISABLED)
+           Label5_text.config(bg="#f0f0f0")
+           Scrollbar.config(command=Label5_text.yview)
+
+         
+   else:
+      col7_values=result["col7"].tolist()
+      unique_values=set(col7_values)
+      
+      col7_np_values=[f"{v}_np"for v in unique_values if f"{v}_np in df["col7"].tolist()] 
+      col7_nsr_values=[f"{v}_nsr"for v in unique_values if f"{v}_nsr in df["col7"].tolist()] 
+      
+      all_values = col7_values+col7_np_values+col7_nsr_values
+      all_values.sort() 
+
+      if not all_values:
+         Label3.config(text="결과없음")
+     else:
+         index_values=[f"{i:2}{v}"for i, v in enumerate(all_values, start=1)]
+         Label3.config(text="\n".join(index_values), justify='left')
+      
+         final=(df[df["col7"].apply(lambda x: x in all_values)])
+         final.reset_index(inplace=True)
+         final.index=final.index+1
+         col1_str='\n'.join(f'{index+1:2}{value}'for index, value in enumerate(final['col1'].astype(str)))
+
+   final=(df[df["col7"].apply(lambda x: x in all_values)])
+
+   final.reset_index(inplace=True)
+
+   final.index=final.index+1
+
+   df2=pd.DateFrame(final["col1"])
+
+   df2.to_csv(output_path)
+
+   Scrollbar=Scrollvar(win)
+
+   Scrollbar.place(x=5, y=276, width=310, height=200)
+
+   col1_str='\n'.join(f'{index+1:2}{value}'for index, value in enumerate(final['col1'].astype(str)))
+   Label4_text.insert(END,col1_str)
+   Label4_text.tag_configure("left",justfy='left', lmargin1=25)
+   Label4_text.tag_add("left","1.0","end")
+   Label4_text.config(state=DISABLED)
+   Label4_text.config(bg="#f0f0f0")
+   Scrollbar.config(command=Label4_text.yview)
+
+   label6.config(text="{}{}".format(len(final.index),drive))
+
+def on_enter(event):
+       input_text=ent.get()
+       code_P()
+
+ent.bind('<return>',on_enter)
+
+btn1=Button(win)
+btn1.config(text="go")
+btn1.place(x=218,y=7)
+btn1.config(command=code_P)
+
+label3=label(win,text="")
+label3.config(text="")
+label3.place(x=5,y=100)
+
+
+label6=label(win,text="")
+label6.config(text="")
+label6.place(x=5,y=495)
+
+win.mainloop()

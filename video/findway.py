@@ -11,7 +11,7 @@ def onChange(x):
 def region_of_interrest(img):
   imshape = img.shape
 
-  #ㅈ
+  #
   vertices = np.array([[
     (0, imshape[0])
     , (350, 180)
@@ -35,7 +35,7 @@ def region_of_interrest(img):
 #region_of_interrest
 
 # 캡쳐 시작 좌표, 가로, 세로 길이
-x, y, width, height = 985, 195, 890, 400
+x, y, width, height = 10, 195, 1890, 1000
 """
 image : 8bit, single-channel binary image, canny edge를 선 적용.
 rho : r 값의 범위 (0 ~ 1 실수)
