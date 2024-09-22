@@ -3,7 +3,7 @@ pip 문제시 복구
     실행 python get-pip.py
 
 
-ocr 
+#ocr 
 install pip install -q paddlepaddle paddleocr
 pip install paddlepaddle paddleocr
 apt-get install --reinstall python3-wget
@@ -16,10 +16,10 @@ pip install pytesseract opencv-python
 혹은
 pip install easyocr
 
-바코드
+#바코드
 pip install pyzbar opencv-python
 
-번역기
+#번역기
 pip install googletrans==4.0.0-rc1
 : import googletrans
   translator = googletrans.Translator()
